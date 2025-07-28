@@ -1,4 +1,5 @@
 const Product = require("../models/Product");
+const mongoose = require("mongoose");
 
 // Get all products with filters
 exports.getAllProducts = async (req, res) => {
@@ -76,7 +77,17 @@ exports.getAllProducts = async (req, res) => {
 // Get product by ID
 exports.getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id).populate("brand");
+    const { id } = req.params;
+
+    // Kiểm tra nếu id không phải là ObjectId hợp lệ
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "ID không hợp lệ",
+      });
+    }
+
+    const product = await Product.findById(id).populate("brand");
     if (!product) {
       return res.status(404).json({
         success: false,
@@ -144,27 +155,12 @@ exports.getNewProducts = async (req, res) => {
 exports.getProductsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
-    const { page = 1, limit = 10, sort = "-createdAt" } = req.query;
 
-    const skip = (page - 1) * limit;
-
-    const products = await Product.find({ category })
-      .populate("brand")
-      .sort(sort)
-      .skip(skip)
-      .limit(Number(limit));
-
-    const total = await Product.countDocuments({ category });
+    const products = await Product.find({ categories: category });
 
     res.status(200).json({
       success: true,
       data: products,
-      pagination: {
-        currentPage: Number(page),
-        totalPages: Math.ceil(total / limit),
-        totalItems: total,
-        itemsPerPage: Number(limit),
-      },
     });
   } catch (error) {
     res.status(500).json({
@@ -263,6 +259,74 @@ exports.getAllProductsNoFilter = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to fetch products",
+    });
+  }
+};
+
+/**
+ * Filter products by multiple criteria
+ */
+exports.filterProducts = async (req, res) => {
+  try {
+    const { category, priceRange, types, origins } = req.query;
+
+    const filter = {};
+
+    // Filter by category
+    if (category) {
+      filter.categories = category;
+    }
+
+    // Filter by price range
+    if (priceRange) {
+      const [minPrice, maxPrice] = (() => {
+        switch (priceRange) {
+          case "under-500k":
+            return [0, 500000];
+          case "500k-1m":
+            return [500000, 1000000];
+          case "1m-3m":
+            return [1000000, 3000000];
+          case "3m-5m":
+            return [3000000, 5000000];
+          case "5m-7m":
+            return [5000000, 7000000];
+          case "over-7m":
+            return [7000000, Infinity];
+          default:
+            return [0, Infinity];
+        }
+      })();
+      filter.currentPrice = { $gte: minPrice, $lte: maxPrice };
+    }
+
+    // Filter by types
+    if (types) {
+      const typesArray = Array.isArray(types) ? types : [types];
+      filter.type = { $in: typesArray };
+    }
+
+    // Filter by origins
+    if (origins) {
+      const originsArray = Array.isArray(origins) ? origins : [origins];
+      filter.origin = {
+        $in: originsArray.map((origin) =>
+          origin.toLowerCase().replace(/\s+/g, "-")
+        ),
+      };
+    }
+
+    const products = await Product.find(filter);
+
+    res.status(200).json({
+      success: true,
+      data: products,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Lỗi khi lọc danh sách sản phẩm",
+      error: error.message,
     });
   }
 };

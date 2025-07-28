@@ -83,7 +83,7 @@ const ProductSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    tags: [
+    categories: [
       {
         type: String,
         trim: true,

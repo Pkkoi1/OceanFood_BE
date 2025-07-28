@@ -186,39 +186,9 @@ router.get("/new", productController.getNewProducts);
  *           type: string
  *         required: true
  *         description: Key của danh mục
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: Số trang
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *         description: Số sản phẩm mỗi trang
- *       - in: query
- *         name: sort
- *         schema:
- *           type: string
- *           default: -createdAt
- *         description: Sắp xếp
  *     responses:
  *       200:
  *         description: Danh sách sản phẩm theo danh mục
- */
-router.get("/category/:category", productController.getProductsByCategory);
-
-/**
- * @swagger
- * /api/products/all:
- *   get:
- *     summary: Lấy tất cả sản phẩm không cần lọc
- *     tags: [Products]
- *     responses:
- *       200:
- *         description: Danh sách tất cả sản phẩm
  *         content:
  *           application/json:
  *             schema:
@@ -229,9 +199,57 @@ router.get("/category/:category", productController.getProductsByCategory);
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: 'components/schemas/Product'
+ *                     $ref: '#/components/schemas/Product'
  */
-router.get("/all", productController.getAllProductsNoFilter);
+router.get("/category/:category", productController.getProductsByCategory);
+
+/**
+ * @swagger
+ * /api/products/filter:
+ *   get:
+ *     summary: Lọc danh sách sản phẩm theo tiêu chí
+ *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *         description: Lọc theo danh mục
+ *       - in: query
+ *         name: priceRange
+ *         schema:
+ *           type: string
+ *         description: Lọc theo khoảng giá (e.g., under-500k, 500k-1m, etc.)
+ *       - in: query
+ *         name: types
+ *         schema:
+ *           type: array
+ *           items:
+ *             type: string
+ *         description: Lọc theo loại sản phẩm
+ *       - in: query
+ *         name: origins
+ *         schema:
+ *           type: array
+ *           items:
+ *             type: string
+ *         description: Lọc theo nguồn gốc
+ *     responses:
+ *       200:
+ *         description: Danh sách sản phẩm đã lọc
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Product'
+ */
+router.get("/filter", productController.filterProducts);
 
 /**
  * @swagger
