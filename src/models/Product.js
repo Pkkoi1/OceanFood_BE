@@ -73,6 +73,10 @@ const ProductSchema = new mongoose.Schema(
       type: Number,
       min: 0,
     },
+    condition: {
+      type: String,
+      null: true,
+    },
     inStock: {
       type: Boolean,
       default: true,
@@ -107,6 +111,9 @@ const ProductSchema = new mongoose.Schema(
         trim: true,
       },
     ],
+    stockStatus: {
+      type: String,
+    },
   },
   {
     timestamps: true,
