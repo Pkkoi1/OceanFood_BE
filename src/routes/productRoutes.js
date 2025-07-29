@@ -205,6 +205,39 @@ router.get("/category/:category", productController.getProductsByCategory);
 
 /**
  * @swagger
+ * /api/products/category/{category}/origins:
+ *   get:
+ *     summary: Lấy danh sách nguồn gốc theo danh mục
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: category
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Key của danh mục
+ *     responses:
+ *       200:
+ *         description: Danh sách nguồn gốc theo danh mục
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ */
+router.get(
+  "/category/:category/origins",
+  productController.getOriginsByCategory
+);
+
+/**
+ * @swagger
  * /api/products/filter:
  *   get:
  *     summary: Lọc danh sách sản phẩm theo tiêu chí
@@ -228,7 +261,7 @@ router.get("/category/:category", productController.getProductsByCategory);
  *             type: string
  *         description: Lọc theo loại sản phẩm
  *       - in: query
- *         name: origins
+ *         name: origin
  *         schema:
  *           type: array
  *           items:
@@ -250,6 +283,36 @@ router.get("/category/:category", productController.getProductsByCategory);
  *                     $ref: '#/components/schemas/Product'
  */
 router.get("/filter", productController.filterProducts);
+
+/**
+ * @swagger
+ * /api/products/search:
+ *   get:
+ *     summary: Tìm kiếm sản phẩm theo tên
+ *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Tên sản phẩm cần tìm kiếm
+ *     responses:
+ *       200:
+ *         description: Danh sách sản phẩm phù hợp
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Product'
+ */
+router.get("/search", productController.searchProductsByName);
 
 /**
  * @swagger

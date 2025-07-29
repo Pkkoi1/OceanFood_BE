@@ -31,9 +31,27 @@ const ProductSchema = new mongoose.Schema(
         type: String,
       },
     ],
-    description: {
+    description: [
+      {
+        title: {
+          type: String,
+          trim: true,
+        },
+        content: {
+          type: String,
+          trim: true,
+        },
+      },
+    ],
+    origin: {
       type: String,
       trim: true,
+      required: true,
+    },
+    commitment: {
+      type: String,
+      trim: true,
+      required: true,
     },
     category: {
       type: String,

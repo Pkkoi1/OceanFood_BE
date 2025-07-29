@@ -268,7 +268,7 @@ exports.getAllProductsNoFilter = async (req, res) => {
  */
 exports.filterProducts = async (req, res) => {
   try {
-    const { category, priceRange, types, origins } = req.query;
+    const { category, priceRange, types, origin } = req.query;
 
     const filter = {};
 
@@ -306,12 +306,12 @@ exports.filterProducts = async (req, res) => {
       filter.type = { $in: typesArray };
     }
 
-    // Filter by origins
-    if (origins) {
-      const originsArray = Array.isArray(origins) ? origins : [origins];
+    // Filter by origin
+    if (origin) {
+      const originArray = Array.isArray(origin) ? origin : [origin];
       filter.origin = {
-        $in: originsArray.map((origin) =>
-          origin.toLowerCase().replace(/\s+/g, "-")
+        $in: originArray.map(
+          (o) => new RegExp(`^${o.replace(/-/g, " ")}$`, "i")
         ),
       };
     }
@@ -326,6 +326,59 @@ exports.filterProducts = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Lỗi khi lọc danh sách sản phẩm",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Get distinct origins by category
+ */
+exports.getOriginsByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+
+    const origins = await Product.distinct("origin", { categories: category });
+
+    res.status(200).json({
+      success: true,
+      data: origins,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Lỗi khi lấy danh sách nguồn gốc theo danh mục",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Search products by name
+ */
+exports.searchProductsByName = async (req, res) => {
+  try {
+    const { name } = req.query;
+
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: "Vui lòng cung cấp tên sản phẩm để tìm kiếm",
+      });
+    }
+
+    const products = await Product.find({
+      name: { $regex: name, $options: "i" },
+    });
+
+    res.status(200).json({
+      success: true,
+      data: products,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Lỗi khi tìm kiếm sản phẩm theo tên",
       error: error.message,
     });
   }
