@@ -153,3 +153,34 @@ exports.clearFavorites = async (req, res) => {
     });
   }
 };
+
+// Count the number of favorites for each user
+exports.countFavoritesByUser = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Find the favorite list for the user
+    const favorite = await Favorite.findOne({ userId });
+
+    if (!favorite) {
+      return res.status(404).json({
+        success: false,
+        message: "Không tìm thấy danh sách yêu thích của người dùng",
+      });
+    }
+
+    const count = favorite.productIds.length;
+
+    res.status(200).json({
+      success: true,
+      data: { userId, count },
+      message: "Đếm số lượng sản phẩm yêu thích thành công",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Lỗi khi đếm số lượng sản phẩm yêu thích",
+      error: error.message,
+    });
+  }
+};

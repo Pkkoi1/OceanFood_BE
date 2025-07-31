@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 
@@ -11,6 +12,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Register routes
+app.use("/api/users", userRoutes);
 
 // Swagger configuration
 const swaggerOptions = {
@@ -76,7 +80,6 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ Connected to MongoDB");
-
   })
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 

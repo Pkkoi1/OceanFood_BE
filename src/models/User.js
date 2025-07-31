@@ -5,22 +5,16 @@ const userSchema = new mongoose.Schema(
   {
     email: {
       type: String,
-      required: [true, "Email is required"],
+      required: [true, "Email là bắt buộc"],
       unique: true,
       lowercase: true,
       trim: true,
-      match: [/.+@.+\..+/, "Please enter a valid email address"],
-    },
-    username: {
-      type: String,
-      required: [true, "Username is required"],
-      unique: true,
-      trim: true,
+      match: [/.+@.+\..+/, "Vui lòng nhập địa chỉ email hợp lệ"],
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
-      minlength: [6, "Password must be at least 6 characters long"],
+      required: [true, "Mật khẩu là bắt buộc"],
+      minlength: [6, "Mật khẩu phải có ít nhất 6 ký tự"],
     },
     role: {
       type: String,
@@ -29,14 +23,14 @@ const userSchema = new mongoose.Schema(
     },
     fullName: {
       type: String,
-      required: [true, "Full name is required"],
+      required: [true, "Họ và tên là bắt buộc"],
       trim: true,
     },
     phoneNumber: {
       type: String,
-      required: [true, "Phone number is required"],
+      required: [true, "Số điện thoại là bắt buộc"],
       unique: true,
-      match: [/^\d{10,15}$/, "Please enter a valid phone number"],
+      match: [/^\d{10,15}$/, "Vui lòng nhập số điện thoại hợp lệ"],
     },
   },
   {
@@ -51,6 +45,12 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// Method to compare passwords
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+module.exports = mongoose.model("User", userSchema);
 // Method to compare passwords
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);

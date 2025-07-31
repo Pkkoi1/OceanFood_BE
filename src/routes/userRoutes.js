@@ -18,9 +18,11 @@ const authMiddleware = require("../middlewares/authMiddleware");
  *             properties:
  *               email:
  *                 type: string
- *               username:
- *                 type: string
  *               password:
+ *                 type: string
+ *               fullName:
+ *                 type: string
+ *               phoneNumber:
  *                 type: string
  *     responses:
  *       201:

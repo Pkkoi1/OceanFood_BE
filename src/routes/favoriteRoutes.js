@@ -190,4 +190,39 @@ router.delete(
  */
 router.delete("/:userId/clear", favoriteController.clearFavorites);
 
+/**
+ * @swagger
+ * /api/favorites/{userId}/count:
+ *   get:
+ *     summary: Đếm số lượng sản phẩm yêu thích của người dùng
+ *     tags: [Favorites]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID người dùng
+ *     responses:
+ *       200:
+ *         description: Số lượng sản phẩm yêu thích
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     userId:
+ *                       type: string
+ *                     count:
+ *                       type: integer
+ *       404:
+ *         description: Không tìm thấy danh sách yêu thích
+ */
+router.get("/:userId/count", favoriteController.countFavoritesByUser);
+
 module.exports = router;

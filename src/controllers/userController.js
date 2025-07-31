@@ -4,31 +4,37 @@ const jwt = require("jsonwebtoken");
 // Register a new user
 exports.registerUser = async (req, res) => {
   try {
-    const { email, username, password, fullName, phoneNumber } = req.body;
+    const { email, password, fullName, phoneNumber } = req.body;
 
-    // Check if email, username, or phone number already exists
+    // Check if email or phone number already exists
     const existingUser = await User.findOne({
-      $or: [{ email }, { username }, { phoneNumber }],
+      $or: [{ email }, { phoneNumber }],
     });
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "Email, username, or phone number already exists",
+        message: "Email hoặc số điện thoại đã tồn tại",
       });
     }
 
-    const user = new User({ email, username, password, fullName, phoneNumber });
+    const user = new User({ email, password, fullName, phoneNumber });
     await user.save();
 
     res.status(201).json({
       success: true,
       data: user,
-      message: "User registered successfully",
+      message: "Đăng ký người dùng thành công",
     });
   } catch (error) {
+    let errorMessage = "Lỗi khi đăng ký người dùng";
+    if (error.name === "ValidationError") {
+      errorMessage = Object.values(error.errors)
+        .map((err) => err.message)
+        .join(", ");
+    }
     res.status(500).json({
       success: false,
-      message: "Error registering user",
+      message: errorMessage,
       error: error.message,
     });
   }
@@ -44,7 +50,7 @@ exports.loginUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: "Người dùng không tồn tại",
       });
     }
 
@@ -53,14 +59,14 @@ exports.loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: "Invalid credentials",
+        message: "Thông tin đăng nhập không hợp lệ",
       });
     }
 
     // Generate JWT token
     const token = jwt.sign(
       { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET, // Đảm bảo biến này đã được định nghĩa
       {
         expiresIn: "1d",
       }
@@ -69,12 +75,12 @@ exports.loginUser = async (req, res) => {
     res.status(200).json({
       success: true,
       data: { token, user },
-      message: "Login successful",
+      message: "Đăng nhập thành công",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error logging in",
+      message: "Lỗi khi đăng nhập",
       error: error.message,
     });
   }
@@ -87,7 +93,7 @@ exports.getUserProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: "Không tìm thấy người dùng",
       });
     }
 
@@ -98,7 +104,7 @@ exports.getUserProfile = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error fetching user profile",
+      message: "Lỗi khi lấy thông tin người dùng",
       error: error.message,
     });
   }
@@ -110,12 +116,12 @@ exports.logoutUser = async (req, res) => {
     // Invalidate the token on the client side by removing it
     res.status(200).json({
       success: true,
-      message: "Logout successful",
+      message: "Đăng xuất thành công",
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error logging out",
+      message: "Lỗi khi đăng xuất",
       error: error.message,
     });
   }
