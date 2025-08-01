@@ -97,40 +97,6 @@ const handbookController = require("../controllers/handbookController");
  *   get:
  *     summary: Lấy danh sách bài viết cẩm nang
  *     tags: [Handbook]
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           default: 1
- *         description: Số trang
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           default: 10
- *         description: Số bài viết mỗi trang
- *       - in: query
- *         name: category
- *         schema:
- *           type: string
- *         description: Lọc theo danh mục
- *       - in: query
- *         name: tag
- *         schema:
- *           type: string
- *         description: Lọc theo tag
- *       - in: query
- *         name: search
- *         schema:
- *           type: string
- *         description: Tìm kiếm theo tiêu đề, tóm tắt, tags
- *       - in: query
- *         name: sort
- *         schema:
- *           type: string
- *           default: -createdAt
- *         description: Sắp xếp
  *     responses:
  *       200:
  *         description: Danh sách bài viết
@@ -145,17 +111,6 @@ const handbookController = require("../controllers/handbookController");
  *                   type: array
  *                   items:
  *                     $ref: 'components/schemas/HandbookArticle'
- *                 pagination:
- *                   type: object
- *                   properties:
- *                     currentPage:
- *                       type: integer
- *                     totalPages:
- *                       type: integer
- *                     totalItems:
- *                       type: integer
- *                     itemsPerPage:
- *                       type: integer
  */
 router.get("/", handbookController.getAllArticles);
 
@@ -214,6 +169,40 @@ router.get("/featured", handbookController.getFeaturedArticles);
  *         description: Danh sách bài viết theo danh mục
  */
 router.get("/category/:category", handbookController.getArticlesByCategory);
+
+/**
+ * @swagger
+ * /api/handbook/search:
+ *   get:
+ *     summary: Tìm bài viết theo tiêu đề
+ *     tags: [Handbook]
+ *     parameters:
+ *       - in: query
+ *         name: title
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Tiêu đề bài viết cần tìm
+ *     responses:
+ *       200:
+ *         description: Danh sách bài viết phù hợp
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: 'components/schemas/HandbookArticle'
+ *       400:
+ *         description: Thiếu tiêu đề bài viết
+ *       404:
+ *         description: Không tìm thấy bài viết
+ */
+router.get("/search", handbookController.getArticlesByTitle);
 
 /**
  * @swagger
@@ -314,5 +303,35 @@ router.put("/:id", handbookController.updateArticle);
  *         description: Không tìm thấy bài viết
  */
 router.delete("/:id", handbookController.deleteArticle);
+
+/**
+ * @swagger
+ * /api/handbook/id/{id}:
+ *   get:
+ *     summary: Lấy bài viết theo ID
+ *     tags: [Handbook]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID của bài viết
+ *     responses:
+ *       200:
+ *         description: Thông tin bài viết
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: 'components/schemas/HandbookArticle'
+ *       404:
+ *         description: Không tìm thấy bài viết
+ */
+router.get("/id/:id", handbookController.getArticleById);
 
 module.exports = router;
