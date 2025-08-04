@@ -221,4 +221,60 @@ router.delete("/:userId/item/:itemId", cartController.removeFromCart);
  */
 router.delete("/:userId/clear", cartController.clearCart);
 
+/**
+ * @swagger
+ * /api/cart/{userId}/item/{productId}/quantity:
+ *   put:
+ *     summary: Thay đổi số lượng sản phẩm trong giỏ hàng
+ *     tags: [Cart]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID người dùng
+ *       - in: path
+ *         name: productId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID sản phẩm
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - quantity
+ *             properties:
+ *               quantity:
+ *                 type: number
+ *                 minimum: 0
+ *                 description: Số lượng mới (0 để xóa sản phẩm)
+ *     responses:
+ *       200:
+ *         description: Cập nhật thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: 'components/schemas/Cart'
+ *                 message:
+ *                   type: string
+ *       404:
+ *         description: Không tìm thấy giỏ hàng hoặc sản phẩm
+ *       400:
+ *         description: Dữ liệu không hợp lệ
+ */
+router.put(
+  "/:userId/item/:productId/quantity",
+  cartController.changeItemQuantity
+);
+
 module.exports = router;

@@ -5,6 +5,7 @@ const cors = require("cors");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const userRoutes = require("./routes/userRoutes");
+const flashSaleRoutes = require("./routes/flashSaleRoutes");
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Register routes
 app.use("/api/users", userRoutes);
+app.use("/api/flash-sale", flashSaleRoutes);
 
 // Swagger configuration
 const swaggerOptions = {
@@ -80,6 +82,7 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ Connected to MongoDB");
+    // Không cần gọi seedData() nữa
   })
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
@@ -102,4 +105,5 @@ app.use("*", (req, res) => {
   });
 });
 
+module.exports = app;
 module.exports = app;

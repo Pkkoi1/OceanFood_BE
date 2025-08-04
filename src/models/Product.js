@@ -86,6 +86,16 @@ const ProductSchema = new mongoose.Schema(
       min: 0,
       default: 0,
     },
+    soldQuantity: {
+      type: Number,
+      min: 0,
+      default: 0, // Số lượng đã bán
+    },
+    totalQuantity: {
+      type: Number,
+      min: 0,
+      default: 0, // Tổng số lượng sản phẩm
+    },
     rating: {
       type: Number,
       min: 0,
