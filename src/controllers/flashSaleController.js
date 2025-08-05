@@ -9,7 +9,6 @@ exports.getFlashSales = async (req, res) => {
         select: "name price originalPrice discount image categories origin", // Đảm bảo trường origin được chọn
       });
 
-    console.log("Query result:", flashSales); // Log kết quả truy vấn
 
     if (flashSales.length === 0) {
       return res.status(200).json({

@@ -235,8 +235,6 @@ exports.getArticlesByTitle = async (req, res) => {
       title: { $regex: normalizedTitle, $options: "i" }, // Tìm kiếm không phân biệt chữ hoa/chữ thường
     });
 
-    console.log("Query result:", articles); // Log kết quả truy vấn
-
     if (articles.length === 0) {
       return res.status(404).json({
         success: false,

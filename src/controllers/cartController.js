@@ -140,7 +140,9 @@ exports.removeFromCart = async (req, res) => {
       });
     }
 
-    cart.items = cart.items.filter((item) => item._id.toString() !== itemId);
+    cart.items = cart.items.filter(
+      (item) => item.product.toString() !== itemId
+    );
 
     await cart.save();
     await cart.populate("items.product");
@@ -245,4 +247,3 @@ exports.changeItemQuantity = async (req, res) => {
     });
   }
 };
-  

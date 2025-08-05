@@ -6,6 +6,7 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const userRoutes = require("./routes/userRoutes");
 const flashSaleRoutes = require("./routes/flashSaleRoutes");
+const orderRoutes = require("./routes/orderRoutes");
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 // Register routes
 app.use("/api/users", userRoutes);
 app.use("/api/flash-sale", flashSaleRoutes);
+app.use("/api/orders", orderRoutes);
 
 // Swagger configuration
 const swaggerOptions = {
@@ -105,5 +107,4 @@ app.use("*", (req, res) => {
   });
 });
 
-module.exports = app;
 module.exports = app;
