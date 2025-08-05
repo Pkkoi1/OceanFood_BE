@@ -13,11 +13,7 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://oceanfood-be.onrender.com",
-      process.env.FRONTEND_URL,
-    ],
+    origin: ["https://oceanfood-be.onrender.com", process.env.FRONTEND_URL],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Accept"],
