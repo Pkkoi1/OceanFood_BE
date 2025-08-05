@@ -60,7 +60,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: process.env.BASE_URL || "http://localhost:3000",
+        url: "https://oceanfood-be.onrender.com",
         description: "Development server",
       },
       {
