@@ -11,9 +11,33 @@ const orderRoutes = require("./routes/orderRoutes");
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: true, // Allow all origins for now, or specify your domains
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Accept",
+      "Origin",
+      "X-Requested-With",
+    ],
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Handle preflight requests
+app.options("*", (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, Accept, Origin, X-Requested-With"
+  );
+  res.sendStatus(200);
+});
 
 // Register routes
 app.use("/api/users", userRoutes);
@@ -39,6 +63,10 @@ const swaggerOptions = {
         url: process.env.BASE_URL || "http://localhost:3000",
         description: "Development server",
       },
+      {
+        url: "https://oceanfood-be.onrender.com",
+        description: "Production server on Render",
+      },
     ],
     components: {
       securitySchemes: {
@@ -62,6 +90,17 @@ app.use(
   swaggerUi.setup(swaggerSpec, {
     customCss: ".swagger-ui .topbar { display: none }",
     customSiteTitle: "OceanFood API Documentation",
+    swaggerOptions: {
+      requestInterceptor: (req) => {
+        // Add CORS headers for Swagger requests
+        req.headers["Access-Control-Allow-Origin"] = "*";
+        req.headers["Access-Control-Allow-Methods"] =
+          "GET, POST, PUT, DELETE, OPTIONS";
+        req.headers["Access-Control-Allow-Headers"] =
+          "Content-Type, Authorization, Accept";
+        return req;
+      },
+    },
   })
 );
 
