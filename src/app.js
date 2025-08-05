@@ -11,14 +11,7 @@ const orderRoutes = require("./routes/orderRoutes");
 const app = express();
 
 // Middleware
-app.use(
-  cors({
-    origin: ["https://oceanfood-be.onrender.com", process.env.FRONTEND_URL],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "Accept"],
-  })
-);
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -45,10 +38,6 @@ const swaggerOptions = {
       {
         url: process.env.BASE_URL || "http://localhost:3000",
         description: "Development server",
-      },
-      {
-        url: "https://your-render-app.onrender.com",
-        description: "Production server on Render",
       },
     ],
     components: {
