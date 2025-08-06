@@ -297,7 +297,7 @@ exports.filterProducts = async (req, res) => {
             return [0, Infinity];
         }
       })();
-      filter.currentPrice = { $gte: minPrice, $lte: maxPrice };
+      filter.price = { $gte: minPrice, $lte: maxPrice };
     }
 
     // Filter by types
